@@ -6,13 +6,7 @@ import { useRouter } from "next/router";
 export default function Home({ results }) {
   const router = useRouter();
   const onClick = (id, original_title) => {
-    router.push(
-      {
-        pathname: "/movies/[id]",
-        query: { id, original_title },
-      },
-      `/movies/${id}` // as
-    );
+    router.push(`/movies/${original_title}/${id}`);
   };
   return (
     <div className="container">
@@ -21,14 +15,7 @@ export default function Home({ results }) {
       {/* Link를 사용하거나, react처럼 onClick을 사용할 수도 있음. */}
       {results?.map((movie) => (
         <Link
-          href={{
-            pathname: `/movies/${movie.id}`,
-            query: {
-              id: movie.id,
-              original_title: movie.original_title,
-            },
-          }}
-          as={`/movies/${movie.id}`}
+          href={`/movies/${movie.original_title}/${movie.id}`}
           key={movie.id}
         >
           <div
