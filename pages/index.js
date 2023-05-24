@@ -1,19 +1,45 @@
-// pages 폴더 안에 있는 파일명에 따라 라우팅이 됨.
-// index.js는 기본적으로 라우팅이 되는 파일임.
-// 즉, localhost:3000/ 으로 접속하면 index.js가 렌더링 됨.
+import { useEffect, useState } from "react";
+import Seo from "../components/Seo";
 
-import { useState } from "react";
-import NavBar from "../components/NavBar";
-
-// 파일 내 함수명은 반드시 export default로 선언해야 함.
-// 그렇지 않으면 라우팅이 되지 않음.
-
-// Static Pre-rendering을 지원함.
 export default function Home() {
-  const [counter, setCounter] = useState(0);
+  const [movies, setMovies] = useState([]);
+  useEffect(() => {
+    (async () => {
+      const { results } = await (await fetch(`/api/movies`)).json();
+      setMovies(results);
+    })();
+  }, []);
   return (
-    <div>
-      <h1>Hello</h1>
+    <div className="container">
+      <Seo title="Home" />
+      {!movies ? <h4>Loading...</h4> : null}
+      {movies?.map((movie) => (
+        <div className="movie" key={movie.id}>
+          <img src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`} />
+          <h4>{movie.original_title}</h4>
+        </div>
+      ))}
+      <style jsx>{`
+        .container {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          padding: 20px;
+          gap: 20px;
+        }
+        .movie img {
+          max-width: 100%;
+          border-radius: 12px;
+          transition: transform 0.2s ease-in-out;
+          box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+        }
+        .movie:hover img {
+          transform: scale(1.05) translateY(-10px);
+        }
+        .movie h4 {
+          font-size: 18px;
+          text-align: center;
+        }
+      `}</style>
     </div>
   );
 }
